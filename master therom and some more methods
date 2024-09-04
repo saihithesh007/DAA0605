@@ -1,0 +1,9 @@
+# Master Theorem
+def master_theorem(a, b, k):
+    return f"T(n) = O(n^{k})"
+# Substitution Method
+def substitution_method():
+    return "T(n) = O(nlogn)"
+# Iteration Method
+def iteration_method():
+    return "T(n) = O(n^2)"
