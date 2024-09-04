@@ -1,1 +1,21 @@
+def count_digits(n):
+    if n == 0:
+        return 0
+    return 1 + count_digits(n // 10)
 
+def sum_of_powers(n, power):
+    if n == 0:
+        return 0
+    last_digit = n % 10
+    return (last_digit ** power) + sum_of_powers(n // 10, power)
+def is_armstrong_number(n):
+    if n < 0:
+        return False
+    num_digits = count_digits(n)
+    sum_powers = sum_of_powers(n, num_digits)
+    return sum_powers == n
+number = int(input("Enter a number:"))
+if is_armstrong_number(number):
+    print(f"{number} is an Armstrong number")
+else:
+    print(f"{number} is not an Armstrong number.")
