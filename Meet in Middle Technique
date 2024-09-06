@@ -1,0 +1,15 @@
+def meet_in_middle(arr1, arr2):
+    n, m = len(arr1), len(arr2)
+    mid1 = n // 2
+    mid2 = m // 2
+
+    left_sum1 = sum(arr1[:mid1])
+    right_sum1 = sum(arr1[mid1:])
+    left_sum2 = sum(arr2[:mid2])
+    right_sum2 = sum(arr2[mid2:])
+
+    return (left_sum1 + left_sum2, right_sum1 + right_sum2)
+arr1 = [1, 2, 3, 4]
+arr2 = [5, 6, 7, 8]
+result = meet_in_middle(arr1, arr2)
+print("Left Sums:", result[0], "Right Sums:", result[1])
