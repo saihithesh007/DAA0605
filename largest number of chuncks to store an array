@@ -1,0 +1,10 @@
+def maxChunksToSorted(arr):
+    max_chunk = 0
+    current_max = 0
+    for i in range(len(arr)):
+        current_max = max(current_max, arr[i])
+        if current_max == i:
+            max_chunk += 1
+    return max_chunk
+arr = [1, 0, 2, 3, 4]
+print(maxChunksToSorted(arr)) 
