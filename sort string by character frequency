@@ -1,0 +1,11 @@
+def frequency_sort(s):
+    frequency = {}
+    for char in s:
+        frequency[char] = frequency.get(char, 0) + 1
+    sorted_chars = sorted(frequency.items(), key=lambda item: item[1], reverse=True)
+    result = ''
+    for char, freq in sorted_chars:
+        result += char * freq
+    return result
+s = "tree"
+print(frequency_sort(s))  # Output: "eert" or "reee"
