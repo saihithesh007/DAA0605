@@ -1,0 +1,7 @@
+def length_of_last_word(s: str) -> int:
+    return len(s.strip().split()[-1])
+
+# Example usage
+s = "Hello World"
+output = length_of_last_word(s)
+print(output) 
