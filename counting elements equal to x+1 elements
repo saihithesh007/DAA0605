@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 1000
+
+typedef struct Node {
+    int key;
+    struct Node* next;
+} Node;
+
+typedef struct HashSet {
+    Node* table[TABLE_SIZE];
+} HashSet;
+
+// Hash function
+unsigned int hash(int key) {
+    return key % TABLE_SIZE;
+}
+
+// Create a new HashSet
+HashSet* createHashSet() {
+    HashSet* set = (HashSet*)malloc(sizeof(HashSet));
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        set->table[i] = NULL;
+    }
+    return set;
+}
+
+// Add key to HashSet
+void add(HashSet* set, int key) {
+    unsigned int index = hash(key);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->next = set->table[index];
+    set->table[index] = newNode;
+}
+
+// Check if key exists in HashSet
+int contains(HashSet* set, int key) {
+    unsigned int index = hash(key);
+    Node* node = set->table[index];
+    while (node) {
+        if (node->key == key) {
+            return 1; // Found
+        }
+        node = node->next;
+    }
+    return 0; // Not found
+}
+
+// Free HashSet memory
+void freeHashSet(HashSet* set) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Node* node = set->table[i];
+        while (node) {
+            Node* temp = node;
+            node = node->next;
+            free(temp);
+        }
+    }
+    free(set);
+}
+
+// Count elements where x + 1 is also in array
+int countElements(int* arr, int arrSize) {
+    HashSet* set = createHashSet();
+    int count = 0;
+    
+    // Add all elements to the hash set
+    for (int i = 0; i < arrSize; i++) {
+        add(set, arr[i]);
+    }
+    
+    // Count elements where x + 1 exists in the set
+    for (int i = 0; i < arrSize; i++) {
+        if (contains(set, arr[i] + 1)) {
+            count++;
+        }
+    }
+    
+    // Free the hash set memory
+    freeHashSet(set);
+    
+    return count;
+}
+
+// Main function to test the implementation
+int main() {
+    int arr1[] = {1, 2, 3};
+    int arrSize1 = sizeof(arr1) / sizeof(arr1[0]);
+    
+    int result1 = countElements(arr1, arrSize1);
+    printf("Output: %d\n", result1); // Output: 2
+    
+    int arr2[] = {1, 1, 3, 3, 5, 5, 7, 7};
+    int arrSize2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int result2 = countElements(arr2, arrSize2);
+    printf("Output: %d\n", result2); // Output: 0
+    
+    return 0;
+}
