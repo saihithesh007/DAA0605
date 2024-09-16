@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_WORDS 100
+#define MAX_WORD_LENGTH 20
+
+bool wordBreak(char *str, char dict[][MAX_WORD_LENGTH], int dictSize) {
+    int n = strlen(str);
+    bool dp[n + 1];
+    dp[0] = true;
+
+    for (int i = 1; i <= n; i++) {
+        dp[i] = false;
+        for (int j = 0; j < dictSize; j++) {
+            int len = strlen(dict[j]);
+            if (i >= len && dp[i - len] && strncmp(str + i - len, dict[j], len) == 0) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    return dp[n];
+}
+
+int main() {
+    char dict[MAX_WORDS][MAX_WORD_LENGTH] = {"i", "like", "sam", "sung", "samsung", "mobile", "ice", "cream", "icecream", "man", "go", "mango"};
+    int dictSize = 12;
+
+    char input1[] = "ilike";
+    char input2[] = "ilikesamsung";
+
+    printf("Input: %s\nOutput: %s\n", input1, wordBreak(input1, dict, dictSize) ? "Yes" : "No");
+    printf("Input: %s\nOutput: %s\n", input2, wordBreak(input2, dict, dictSize) ? "Yes" : "No");
+
+    return 0;
+}
