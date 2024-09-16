@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+int main() {
+    char s[MAX_SIZE] = "abcxyz"; 
+    int s_len = strlen(s);        
+
+    char direction[][5] = {"left", "right"};
+    int amount[] = {2, 1};
+    int num_shifts = 2;
+
+    int total_shift = 0;
+    for (int i = 0; i < num_shifts; i++) {
+        total_shift += (strcmp(direction[i], "left") == 0 ? -1 : 1) * amount[i];
+    }
+
+    total_shift = (total_shift % s_len + s_len) % s_len;
+
+    // Perform the shift
+    char result[MAX_SIZE];
+    for (int i = 0; i < s_len; i++) {
+        result[(i + total_shift) % s_len] = s[i];
+    }
+    result[s_len] = '\0'; 
+
+    printf("Shifted string: %s\n", result);
+
+    return 0;
+}
