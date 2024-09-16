@@ -1,0 +1,22 @@
+def checkIfCanBreak(s1, s2):
+    # Helper function to sort the characters of a string
+    def sort_string(s):
+        return ''.join(sorted(s))
+    
+    # Sort both strings
+    sorted_s1 = sort_string(s1)
+    sorted_s2 = sort_string(s2)
+    
+    # Check if sorted_s1 can break sorted_s2
+    def can_break(x, y):
+        for i in range(len(x)):
+            if x[i] < y[i]:
+                return False
+        return True
+    
+    # Check both conditions: sorted_s1 can break sorted_s2 or sorted_s2 can break sorted_s1
+    return can_break(sorted_s1, sorted_s2) or can_break(sorted_s2, sorted_s1)
+
+# Example usage:
+print(checkIfCanBreak("abc", "xya"))  # Output: True
+print(checkIfCanBreak("abe", "acd"))  # Output: False
