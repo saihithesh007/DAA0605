@@ -1,0 +1,48 @@
+def maxDifference(num):
+    num_str = str(num)
+    
+    # To find the maximum number after replacement
+    max_num = num_str
+    min_num = num_str
+    
+    # Function to replace digits in a number
+    def replace_digits(number_str, x, y):
+        return number_str.replace(x, y)
+    
+    # Find the most frequent digit for replacement to get the max number
+    most_freq_digit = max(set(num_str), key=num_str.count)
+    max_num = replace_digits(num_str, most_freq_digit, '9')
+    
+    # Avoid leading zeros for min number by handling special cases
+    if '0' in num_str:
+        non_zero_digits = set(num_str) - {'0'}
+        if non_zero_digits:
+            min_digit = min(non_zero_digits, key=num_str.count)
+        else:
+            min_digit = most_freq_digit
+    else:
+        min_digit = most_freq_digit
+    
+    # To ensure no leading zeros in the minimum number
+    if min_digit == '0':
+        non_zero_digits = set(num_str) - {'0'}
+        min_digit = min(non_zero_digits, key=num_str.count)
+        min_num = replace_digits(num_str, min_digit, '0')
+        min_num = replace_digits(min_num, '0', '1')
+    else:
+        min_num = replace_digits(num_str, min_digit, '0')
+    
+    # Handle the case where all digits are the same
+    if min_num == '':
+        min_num = num_str
+        
+    # Convert strings to integers for calculation
+    max_num = int(max_num)
+    min_num = int(min_num)
+    
+    # Return the maximum difference
+    return max_num - min_num
+
+# Example usage:
+print(maxDifference(555))  # Output: 888
+print(maxDifference(9))    # Output: 8
