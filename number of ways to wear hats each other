@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MOD 1000000007
+#define MAX_HATS 40
+#define MAX_PEOPLE 15
+
+int numWays(int* hats, int hatsSize, int* people, int peopleSize) {
+    // Simplified implementation for illustration
+    return 0; // This is a placeholder
+}
+
+int main() {
+    int hats[] = {1, 2, 3};
+    int people[] = {1, 2, 3};
+    printf("Number of ways: %d\n", numWays(hats, sizeof(hats)/sizeof(hats[0]), people, sizeof(people)/sizeof(people[0])));
+    return 0;
+}
