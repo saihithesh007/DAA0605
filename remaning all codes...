@@ -1,0 +1,2019 @@
+def can_break(s1, s2):
+    
+    sorted_s1 = sorted(s1)
+    sorted_s2 = sorted(s2)
+    
+    def can_break_helper(a, b):
+        return all(x >= y for x, y in zip(a, b))
+    
+    return can_break_helper(sorted_s1, sorted_s2) or can_break_helper(sorted_s2, sorted_s1)
+
+s1 = "abc"
+s2 = "cba"
+print(can_break(s1, s2))  
+
+
+22)
+
+def replace_and_calculate_cost(s):
+  
+    s = list(s)
+    n = len(s)
+    
+    count = {chr(c): 0 for c in range(ord('a'), ord('z') + 1)}
+        for char in s:
+        if char != '?':
+            count[char] += 1
+  
+    for i in range(n):
+        if s[i] == '?':
+            # Find the character with the minimum count
+            min_char = min(count, key=count.get)
+            s[i] = min_char
+            count[min_char] += 1
+   
+    value = 0
+    seen_count = {chr(c): 0 for c in range(ord('a'), ord('z') + 1)}
+    
+    for char in s:
+        value += seen_count[char]
+        seen_count[char] += 1
+    
+    return value
+s = "a?b?c?"
+print(replace_and_calculate_cost(s))  # Output the minimized cost
+
+23)
+
+
+def remove_characters_v3(s):
+    stack = []
+    for char in s:
+        if char not in stack:
+            stack.append(char)
+        else:
+            stack.remove(char)
+    return ''.join(stack)
+
+initial_string = "aabcbbca"
+result = remove_characters_v3(initial_string)
+print(result)  # Output: "ba"
+
+24)
+
+def max_subarray_sum(nums):
+    if not nums:
+        return 0
+    max_current = nums[0]
+    max_global = nums[0]
+    for num in nums[1:]:
+        # Update max_current to be the maximum of current number or current number plus max_current
+        max_current = max(num, max_current + num)
+        # Update max_global if max_current is greater
+        max_global = max(max_global, max_current)
+    
+    return max_global
+nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+print(max_subarray_sum(nums))  # Output: 6
+
+25)
+
+class TreeNode:
+    def init(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def constructMaximumBinaryTree(nums):
+    def build_tree(start, end):
+        if start > end:
+            return None
+        max_val = max(nums[start:end + 1])
+        max_index = nums.index(max_val, start, end + 1)
+        root = TreeNode(max_val)
+        root.left = build_tree(start, max_index - 1)
+        root.right = build_tree(max_index + 1, end)
+        
+        return root
+    return build_tree(0, len(nums) - 1)
+def print_tree(root):
+    if root is None:
+        return
+    print(root.val, end=' ')
+    print_tree(root.left)
+    print_tree(root.right)
+
+nums = [3, 2, 1, 6, 0, 5]
+root = constructMaximumBinaryTree(nums)
+print_tree(root)  # Output: 6 3 2 1 5 0
+
+
+26)
+
+def maxSubarraySumCircular(nums):
+    total = sum(nums)
+    max_ending_here = max_so_far = nums[0]
+    min_ending_here = min_so_far = nums[0]
+    
+    for num in nums[1:]:
+        max_ending_here = max(num, max_ending_here + num)
+        max_so_far = max(max_so_far, max_ending_here)
+        
+        min_ending_here = min(num, min_ending_here + num)
+        min_so_far = min(min_so_far, min_ending_here)
+    
+    if max_so_far > 0:
+        return max(max_so_far, total - min_so_far)
+    return max_so_far
+nums = [1, -2, 3, -2]
+print(maxSubarraySumCircular(nums))  # Output: 3
+
+
+27)
+
+# Maximum Sum of Non-Adjacent Subsequences
+
+def max_sum_non_adjacent(nums, queries):
+    MOD = 10**9 + 7
+    
+    def max_sum(nums):
+        incl = 0
+        excl = 0
+        for num in nums:
+            new_excl = max(incl, excl)
+            incl = excl + num
+            excl = new_excl
+        return max(incl, excl) % MOD
+
+    total_sum = 0
+    for pos, x in queries:
+        nums[pos] = x
+        total_sum = (total_sum + max_sum(nums)) % MOD
+
+    return total_sum
+nums = [1, 2, 3, 1]
+queries = [[1, 3], [2, 4]]
+result = max_sum_non_adjacent(nums, queries)
+print(result)
+
+
+28)
+
+# Closest Points to Origin
+
+def kClosest(points, k):
+    def euclidean_distance(point):
+        return (point[0] * 2 + point[1] * 2) ** 0.5
+
+    distances = []
+    for point in points:
+        distances.append((euclidean_distance(point), point))
+
+    distances.sort(key=lambda x: x[0])
+    
+    return [distances[i][1] for i in range(k)]
+
+points = [[1, 3], [-2, 2], [5, 8], [0, 1]]
+k = 2
+print(kClosest(points, k))
+
+29)
+
+
+def findMedianSortedArrays(nums1, nums2):
+    if len(nums1) > len(nums2):
+        nums1, nums2 = nums2, nums1
+    
+    m, n = len(nums1), len(nums2)
+    imin, imax = 0, m
+    half_len = (m + n + 1) // 2
+    
+    while imin <= imax:
+        i = (imin + imax) // 2
+        j = half_len - i
+        
+        max1 = float('-inf') if i == 0 else nums1[i - 1]
+        min1 = float('inf') if i == m else nums1[i]
+        max2 = float('-inf') if j == 0 else nums2[j - 1]
+        min2 = float('inf') if j == n else nums2[j]
+        
+        if max1 <= min2 and max2 <= min1:
+            if (m + n) % 2 == 0:
+                return (max(max1, max2) + min(min1, min2)) / 2
+            else:
+                return max(max1, max2)
+        elif max1 > min2:
+            imax = i - 1
+        else:
+            imin = i + 1
+
+    raise ValueError("Input arrays are not sorted properly or invalid input")
+nums1 = [1, 3]
+nums2 = [2]
+print(findMedianSortedArrays(nums1, nums2))  # Output: 2.0
+
+nums1 = [1, 2]
+nums2 = [3, 4]
+print(findMedianSortedArrays(nums1, nums2))  # Output: 2.5
+
+
+
+
+day 2
+
+
+1)
+
+def find_max_min(arr):
+    if not arr:
+        raise ValueError("The array is empty")
+    max_val = min_val = arr[0]
+    for num in arr[1:]:
+        if num > max_val:
+            max_val = num
+        elif num < min_val:
+            min_val = num
+    
+    return max_val, min_val
+array = [3, 5, 1, 8, -2, 7]
+max_value, min_value = find_max_min(array)
+print("Maximum value:", max_value)  # Output: Maximum value: 8
+print("Minimum value:", min_value)  # Output: Minimum value: -2
+
+
+2) merge sort
+
+
+def merge_sort(arr):
+    if len(arr) > 1:
+        # Find the middle point to divide the array into two halves
+        mid = len(arr) // 2
+        left_half = arr[:mid]
+        right_half = arr[mid:]
+        merge_sort(left_half)
+        merge_sort(right_half)
+        
+        i = j = k = 0
+
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                arr[k] = left_half[i]
+                i += 1
+            else:
+                arr[k] = right_half[j]
+                j += 1
+            k += 1
+
+        while i < len(left_half):
+            arr[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            arr[k] = right_half[j]
+            j += 1
+            k += 1
+
+arr = [38, 27, 43, 3, 9, 82, 10]
+print("Original array:", arr)
+merge_sort(arr)
+print("Sorted array:", arr)
+
+
+
+3)
+
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    else:
+        pivot = arr[len(arr) // 2]
+        left = [x for x in arr if x < pivot]
+        middle = [x for x in arr if x == pivot]
+        right = [x for x in arr if x > pivot]
+        return quick_sort(left) + middle + quick_sort(right)
+
+# Example usage
+arr = [38, 27, 43, 3, 9, 82, 10]
+print("Original array:", arr)
+sorted_arr = quick_sort(arr)
+print("Sorted array:", sorted_arr)
+
+
+
+4)
+
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2         
+        if arr[mid] == target:
+            return mid        
+        elif arr[mid] < target:
+            left = mid + 1          
+        else:
+            right = mid - 1              
+    return -1  
+arr = [2, 3, 4, 10, 40]
+target = 10
+
+index = binary_search(arr, target)
+
+if index != -1:
+    print(f"Element {target} found at index {index}.")
+else:
+    print(f"Element {target} not found in the array.")
+
+
+
+5)
+
+# Strassen's Matrix Multiplication
+
+import numpy as np
+
+def strassen(A, B):
+    if len(A) == 1:
+        return A * B
+
+    mid = len(A) // 2
+
+    A11 = A[:mid, :mid]
+    A12 = A[:mid, mid:]
+    A21 = A[mid:, :mid]
+    A22 = A[mid:, mid:]
+
+    B11 = B[:mid, :mid]
+    B12 = B[:mid, mid:]
+    B21 = B[mid:, :mid]
+    B22 = B[mid:, mid:]
+
+    M1 = strassen(A11 + A22, B11 + B22)
+    M2 = strassen(A21 + A22, B11)
+    M3 = strassen(A11, B12 - B22)
+    M4 = strassen(A22, B21 - B11)
+    M5 = strassen(A11 + A12, B22)
+    M6 = strassen(A21 - A11, B11 + B12)
+    M7 = strassen(A12 - A22, B21 + B22)
+
+    C11 = M1 + M4 - M5 + M7
+    C12 = M3 + M5
+    C21 = M2 + M4
+    C22 = M1 - M2 + M3 + M6
+
+    C = np.zeros((len(A), len(B)))
+    C[:mid, :mid] = C11
+    C[:mid, mid:] = C12
+    C[mid:, :mid] = C21
+    C[mid:, mid:] = C22
+
+    return C
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+result = strassen(A, B)
+print(result)
+
+6)
+
+def karatsuba(x, y):
+    if x < 10 or y < 10:
+        return x * y
+
+    n = max(len(str(x)), len(str(y)))
+    half_n = n // 2
+
+    a = x // 10**half_n
+    b = x % 10**half_n
+    c = y // 10**half_n
+    d = y % 10**half_n
+
+    ac = karatsuba(a, c)
+    bd = karatsuba(b, d)
+    abcd = karatsuba(a + b, c + d)
+
+    return ac * 10*(2 * half_n) + (abcd - ac - bd) * 10*half_n + bd
+x = 1234
+y = 5678
+result = karatsuba(x, y)
+print(f"The product of {x} and {y} is {result}.")
+
+
+7)
+
+import math
+
+def euclidean_distance(p1, p2):
+    return math.sqrt((p1[0] - p2[0]) * 2 + (p1[1] - p2[1]) * 2)
+
+def closest_pair_in_strip(strip, d):
+    min_dist = d
+    strip.sort(key=lambda point: point[1])
+    
+    for i in range(len(strip)):
+        for j in range(i + 1, len(strip)):
+            if (strip[j][1] - strip[i][1]) < min_dist:
+                min_dist = min(min_dist, euclidean_distance(strip[i], strip[j]))
+    
+    return min_dist
+
+def closest_pair_recursive(points_x, points_y):
+    if len(points_x) <= 3:
+        min_dist = float('inf')
+        for i in range(len(points_x)):
+            for j in range(i + 1, len(points_x)):
+                min_dist = min(min_dist, euclidean_distance(points_x[i], points_x[j]))
+        return min_dist
+
+    mid = len(points_x) // 2
+    mid_point = points_x[mid]
+    
+    left_x = points_x[:mid]
+    right_x = points_x[mid:]
+    
+    left_y = []
+    right_y = []
+    for point in points_y:
+        if point[0] <= mid_point[0]:
+            left_y.append(point)
+        else:
+            right_y.append(point)
+    
+    d1 = closest_pair_recursive(left_x, left_y)
+    d2 = closest_pair_recursive(right_x, right_y)
+    
+    d = min(d1, d2)
+    
+    strip = [point for point in points_y if abs(point[0] - mid_point[0]) < d]
+    
+    return min(d, closest_pair_in_strip(strip, d))
+
+def closest_pair(points):
+    points_x = sorted(points, key=lambda point: point[0])
+    points_y = sorted(points, key=lambda point: point[1])
+    
+    return closest_pair_recursive(points_x, points_y)
+points = [(2, 3), (12, 30), (40, 50), (5, 1), (12, 10), (3, 4)]
+result = closest_pair(points)
+print("The smallest distance is:", result)
+
+8)
+
+
+# Median of Medians
+
+def median_of_medians(arr, k):
+    if len(arr) < 10:
+        return sorted(arr)[k]
+
+    sublists = [arr[j:j + 5] for j in range(0, len(arr), 5)]
+    medians = [sorted(sublist)[len(sublist) // 2] for sublist in sublists]
+    pivot = median_of_medians(medians, len(medians) // 2)
+
+    low = [x for x in arr if x < pivot]
+    high = [x for x in arr if x > pivot]
+    k_index = len(low)
+
+    if k < k_index:
+        return median_of_medians(low, k)
+    elif k > k_index:
+        return median_of_medians(high, k - k_index - 1)
+    else:
+        return pivot
+
+# Example usage
+arr = [3, 6, 2, 7, 5, 1, 4, 8, 9, 0]
+k = 5
+print("The median is:", median_of_medians(arr, k))
+
+
+9)
+
+# Meet in the Middle Technique
+
+def meet_in_middle(arr, target):
+    n = len(arr)
+    mid = n // 2
+    left_sums = {0}
+    for i in range(mid):
+        new_sums = {x + arr[i] for x in left_sums}
+        left_sums.update(new_sums)
+    right_sums = {0}
+    for i in range(mid, n):
+        new_sums = {x + arr[i] for x in right_sums}
+        right_sums.update(new_sums)
+    for left in left_sums:
+        if (target - left) in right_sums:
+            return True
+    return False
+arr = [1, 2, 3, 4, 5]
+target = 9
+result = meet_in_middle(arr, target)
+print("Subset with target sum exists:", result)
+
+
+9/9/24
+
+1)
+
+def count_elements(arr):
+    arr_set = set(arr)
+    count = 0
+    for x in arr:
+        if x + 1 in arr_set:
+            count += 1
+    
+    return count
+arr = [1, 2, 3]
+result = count_elements(arr)
+print("Output:", result)  # Output: 2
+
+
+2)
+
+def perform_shifts(s, shift):
+    n = len(s)
+    total_right_shifts = 0
+    for direction, amount in shift:
+        if direction == 1:
+            total_right_shifts += amount
+        else:
+            total_right_shifts -= amount
+    total_right_shifts %= n
+    if total_right_shifts > 0:
+        s = s[-total_right_shifts:] + s[:-total_right_shifts]
+    elif total_right_shifts < 0:
+        total_right_shifts = -total_right_shifts
+        s = s[total_right_shifts:] + s[:total_right_shifts]
+    
+    return s
+s1 = "abc"
+shift1 = [[0,1],[1,2]]
+print(perform_shifts(s1, shift1))  # Output: "cab"
+
+s2 = "abcdefg"
+shift2 = [[1,1],[1,1],[0,2],[1,3]]
+print(perform_shifts(s2, shift2))  # Output: "efgabcd"
+
+
+3)
+
+
+class BinaryMatrix:
+    def init(self, matrix):
+        self.matrix = matrix
+
+    def get(self, row, col):
+        return self.matrix[row][col]
+
+    def dimensions(self):
+        return [len(self.matrix), len(self.matrix[0])]
+
+def leftmost_column_with_one(binaryMatrix):
+    rows, cols = binaryMatrix.dimensions()
+    row, col = 0, cols - 1
+    leftmost_col = -1
+    
+    while row < rows and col >= 0:
+        if binaryMatrix.get(row, col) == 1:
+            leftmost_col = col
+            col -= 1
+        else:
+            row += 1
+    
+    return leftmost_col
+
+mat1 = [[0,0],[1,1]]
+binaryMatrix1 = BinaryMatrix(mat1)
+print(leftmost_column_with_one(binaryMatrix1))  # Output: 0
+
+mat2 = [[0,0],[0,1]]
+binaryMatrix2 = BinaryMatrix(mat2)
+print(leftmost_column_with_one(binaryMatrix2))  # Output: 1
+
+mat3 = [[0,0],[0,0]]
+binaryMatrix3 = BinaryMatrix(mat3)
+print(leftmost_column_with_one(binaryMatrix3))  # Output: -1
+
+
+4)   
+
+
+
+from collections import deque
+
+class FirstUnique:
+
+    def init(self, nums):
+        self.queue = deque()
+        self.counts = {}
+
+        for num in nums:
+            self.add(num)
+
+    def showFirstUnique(self):
+        while self.queue and self.counts[self.queue[0]] > 1:
+            self.queue.popleft()
+
+        if self.queue:
+            return self.queue[0]
+        else:
+            return -1
+
+    def add(self, value):
+        if value not in self.counts:
+            self.counts[value] = 0
+        self.counts[value] += 1
+        self.queue.append(value)
+
+
+firstUnique = FirstUnique([2, 3, 5])
+print(firstUnique.showFirstUnique()) 
+firstUnique.add(5)# Output: 2
+firstUnique.add(2)
+print(firstUnique.showFirstUnique())  
+firstUnique.add(3)
+print(firstUnique.showFirstUnique())  
+
+5)  
+
+class TreeNode:
+    def init(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class Solution:
+    def isValidSequence(self, root, arr):
+        def dfs(node, index):
+            if not node:
+                return False
+            if index >= len(arr) or node.val != arr[index]:
+                return False
+            if not node.left and not node.right:
+                return index == len(arr) - 1
+            return dfs(node.left, index + 1) or dfs(node.right, index + 1)
+
+        return dfs(root, 0)
+
+
+root = TreeNode(0)
+root.left = TreeNode(1)
+root.right = TreeNode(0)
+root.left.left = TreeNode(0)
+root.left.right = TreeNode(1)
+root.right.left = TreeNode(0)
+root.right.right = TreeNode(0)
+root.left.right.left = TreeNode(1)
+root.left.right.right = TreeNode(0)
+
+solution = Solution()
+print(solution.isValidSequence(root, [0, 1, 0, 1]))  
+
+
+6)  
+
+def kidsWithCandies(candies, extraCandies):
+    max_candies = max(candies)
+    return [candy + extraCandies >= max_candies for candy in candies]
+
+
+print(kidsWithCandies([2, 3, 5, 1, 3], 3))  
+print(kidsWithCandies([4, 2, 1, 1, 2], 1))  
+print(kidsWithCandies([12, 1, 12], 10))   
+
+7)   
+
+
+
+def maxDifference(num):
+    num_str = str(num)
+    max_diff = 0
+
+    for x in range(10):
+        for y in range(10):
+            if x == y:
+                continue
+
+            # Create number a
+            a_str = num_str.replace(str(x), str(y))
+            if a_str[0] == '0':
+                continue
+            a = int(a_str)
+
+            for z in range(10):
+                for w in range(10):
+                    if z == w:
+                        continue
+
+                    # Create number b
+                    b_str = num_str.replace(str(z), str(w))
+                    if b_str[0] == '0':
+                        continue
+                    b = int(b_str)
+
+                    max_diff = max(max_diff, abs(a - b))
+
+    return max_diff
+
+
+print(maxDifference(555))  
+
+8)
+
+def canBreak(s1, s2):
+    def checkBreak(s1, s2):
+        return all(x >= y for x, y in zip(s1, s2))
+
+    s1_sorted = sorted(s1)
+    s2_sorted = sorted(s2)
+    
+    return checkBreak(s1_sorted, s2_sorted) or checkBreak(s2_sorted, s1_sorted)
+
+
+print(canBreak("abc", "xya")) 
+
+9) 
+
+
+def numWaysToWearDifferentHats(hats):
+    MOD = 10**9 + 7
+    N = len(hats)
+    
+    hat_to_person = [0] * 41
+    
+    for person, preferences in enumerate(hats):
+        for hat in preferences:
+            hat_to_person[hat] |= (1 << person)
+    
+    dp = [0] * (1 << N)
+    dp[0] = 1
+    
+    for hat in range(1, 41):
+        mask = hat_to_person[hat]
+        for current_mask in range((1 << N) - 1, -1, -1):
+            if dp[current_mask] > 0:
+                new_mask = current_mask | mask
+                dp[new_mask] = (dp[new_mask] + dp[current_mask]) % MOD
+    
+    return dp[(1 << N) - 1]
+
+
+print(numWaysToWearDifferentHats([[3,4],[4,5],[5]]))  
+print(numWaysToWearDifferentHats([[3,5,1],[3,5]]))  
+
+10)
+
+def findDestinationCity(paths):
+    outgoing_cities = set()
+    
+    for start, end in paths:
+        outgoing_cities.add(start)
+    
+    for _, end in paths:
+        if end not in outgoing_cities:
+            return end
+
+
+print(findDestinationCity([["London","New York"],["New York","Lima"],["Lima","Sao Paulo"]]))  
+print(findDestinationCity([["B","C"],["D","B"],["C","A"]])) 
+
+
+day 5 lab
+
+1)
+
+class ListNode:
+    def init(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def mergeTwoLists(list1, list2):
+    dummy = ListNode()
+    current = dummy
+
+    while list1 and list2:
+        if list1.val < list2.val:
+            current.next = list1
+            list1 = list1.next
+        else:
+            current.next = list2
+            list2 = list2.next
+        current = current.next
+
+    if list1:
+        current.next = list1
+    else:
+        current.next = list2
+
+    return dummy.next
+
+def create_linked_list(values):
+    if not values:
+        return None
+    head = ListNode(values[0])
+    current = head
+    for value in values[1:]:
+        current.next = ListNode(value)
+        current = current.next
+    return head
+
+def print_linked_list(head):
+    current = head
+    result = []
+    while current:
+        result.append(current.val)
+        current = current.next
+    print(result)
+
+list1 = create_linked_list([1, 2, 4])
+list2 = create_linked_list([1, 3, 4])
+
+merged_list = mergeTwoLists(list1, list2)
+
+print_linked_list(merged_list)
+
+2)
+
+class ListNode:
+    def init(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def mergeTwoLists(list1, list2):
+    dummy = ListNode()
+    current = dummy
+
+    while list1 and list2:
+        if list1.val < list2.val:
+            current.next = list1
+            list1 = list1.next
+        else:
+            current.next = list2
+            list2 = list2.next
+        current = current.next
+
+    if list1:
+        current.next = list1
+    else:
+        current.next = list2
+
+    return dummy.next
+
+def mergeKLists(lists):
+    if not lists:
+        return None
+
+    while len(lists) > 1:
+        merged_lists = []
+        for i in range(0, len(lists), 2):
+            list1 = lists[i]
+            list2 = lists[i + 1] if i + 1 < len(lists) else None
+            merged_lists.append(mergeTwoLists(list1, list2))
+        lists = merged_lists
+
+    return lists[0]
+
+def create_linked_list(values):
+    if not values:
+        return None
+    head = ListNode(values[0])
+    current = head
+    for value in values[1:]:
+        current.next = ListNode(value)
+        current = current.next
+    return head
+
+def print_linked_list(head):
+    current = head
+    result = []
+    while current:
+        result.append(current.val)
+        current = current.next
+    print(result)
+
+lists = [
+    create_linked_list([1, 4, 5]),
+    create_linked_list([1, 3, 4]),
+    create_linked_list([2, 6])
+]
+
+merged_list = mergeKLists(lists)
+
+print_linked_list(merged_list)
+
+3)
+
+
+def removeDuplicates(nums):
+    if not nums:
+        return 0
+
+    i = 0
+
+    for j in range(1, len(nums)):
+        if nums[j] != nums[i]:
+            i += 1
+            nums[i] = nums[j]
+
+    return i + 1
+
+
+nums = [1, 1, 2]
+
+
+k = removeDuplicates(nums)
+
+
+print("k =", k)  
+print("nums =", nums[:k]) 
+
+
+4)
+
+
+def search(nums, target):
+    left, right = 0, len(nums) - 1
+
+    while left <= right:
+        mid = (left + right) / 2
+
+        if nums[mid] == target:
+            return mid
+
+        if nums[left] <= nums[mid]:  # Left half is sorted
+            if nums[left] <= target < nums[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:  # Right half is sorted
+            if nums[mid] < target <= nums[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+    return -1
+
+
+nums = [4, 5, 6, 7, 0, 1, 2]
+target = 0
+
+
+index = search(nums, target)
+
+
+print("Index of target:", index)
+
+
+5)
+
+
+nums = [5, 7, 7, 8, 8, 10]
+target = 8
+
+left, right = 0, len(nums) - 1
+first_pos, last_pos = -1, -1
+
+while left <= right:
+    mid = (left + right) // 2
+    if nums[mid] == target:
+        first_pos = mid
+        right = mid - 1
+    elif nums[mid] < target:
+        left = mid + 1
+    else:
+        right = mid - 1
+
+left, right = 0, len(nums) - 1
+
+while left <= right:
+    mid = (left + right) // 2
+    if nums[mid] == target:
+        last_pos = mid
+        left = mid + 1
+    elif nums[mid] < target:
+        left = mid + 1
+    else:
+        right = mid - 1
+
+result = [first_pos, last_pos] if first_pos != -1 else [-1, -1]
+
+print(result)
+
+6)
+
+nums = [2, 0, 2, 1, 1, 0]
+
+low, mid, high = 0, 0, len(nums) - 1
+
+while mid <= high:
+    if nums[mid] == 0:
+        nums[low], nums[mid] = nums[mid], nums[low]
+        low += 1
+        mid += 1
+    elif nums[mid] == 1:
+        mid += 1
+    else:
+        nums[mid], nums[high] = nums[high], nums[mid]
+        high -= 1
+
+print(nums)
+
+7)
+
+class ListNode:
+    def init(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+head = ListNode(1, ListNode(1, ListNode(2)))
+
+current = head
+while current and current.next:
+    if current.val == current.next.val:
+        current.next = current.next.next
+    else:
+        current = current.next
+
+
+result = []
+current = head
+while current:
+    result.append(current.val)
+    current = current.next
+
+print(result)
+
+8)
+
+nums1 = [1, 2, 3, 0, 0, 0]
+m = 3
+nums2 = [2, 5, 6]
+n = 3
+
+i, j, k = m - 1, n - 1, m + n - 1
+
+while i >= 0 and j >= 0:
+    if nums1[i] > nums2[j]:
+        nums1[k] = nums1[i]
+        i -= 1
+    else:
+        nums1[k] = nums2[j]
+        j -= 1
+    k -= 1
+
+while j >= 0:
+    nums1[k] = nums2[j]
+    j -= 1
+    k -= 1
+
+print(nums1)
+
+9)
+
+class TreeNode:
+    def init(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def sortedArrayToBST(nums):
+    if not nums:
+        return None
+
+    mid = len(nums) // 2
+    root = TreeNode(nums[mid])
+    
+    root.left = sortedArrayToBST(nums[:mid])
+    root.right = sortedArrayToBST(nums[mid+1:])
+    
+    return root
+
+
+def print_level_order(root):
+    if not root:
+        return []
+    
+    result, current_level = [], [root]
+    while current_level:
+        next_level, values = [], []
+        for node in current_level:
+            if node:
+                values.append(node.val)
+                next_level.append(node.left)
+                next_level.append(node.right)
+            else:
+                values.append(None)
+        if any(val is not None for val in values):
+            result.extend(values)
+        current_level = next_level
+    
+    return result
+
+nums = [-10, -3, 0, 5, 9]
+
+bst_root = sortedArrayToBST(nums)
+
+print(print_level_order(bst_root))
+
+
+10)
+
+class ListNode:
+    def init(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+head = ListNode(4, ListNode(2, ListNode(1, ListNode(3))))
+
+sorted_head = ListNode(0)
+while head:
+    node = head
+    head = head.next
+    prev, curr = sorted_head, sorted_head.next
+    while curr and curr.val < node.val:
+        prev, curr = curr, curr.next
+    node.next, prev.next = curr, node
+
+result = []
+while sorted_head.next:
+    result.append(sorted_head.next.val)
+    sorted_head = sorted_head.next
+
+print(result)
+
+11)
+
+s = "tree"
+
+freq = {}
+for char in s:
+    if char in freq:
+        freq[char] += 1
+    else:
+        freq[char] = 1
+
+sorted_chars = sorted(freq.keys(), key=lambda char: freq[char], reverse=True)
+
+result = ''.join(char * freq[char] for char in sorted_chars)
+
+print(result)
+
+12)
+
+arr = [4, 3, 2, 1, 0]
+
+max_chunk = 0
+max_element = -1
+
+for i in range(len(arr)):
+    max_element = max(max_element, arr[i])
+    if max_element == i:
+        max_chunk += 1
+
+print(max_chunk)
+
+13)
+
+arr1 = [1, 2, 3, 4, 5]
+arr2 = [1, 2, 5, 7, 9]
+arr3 = [1, 3, 4, 5, 8]
+
+i, j, k = 0, 0, 0
+result = []
+
+while i < len(arr1) and j < len(arr2) and k < len(arr3):
+    if arr1[i] == arr2[j] == arr3[k]:
+        result.append(arr1[i])
+        i += 1
+        j += 1
+        k += 1
+    elif arr1[i] < arr2[j]:
+        i += 1
+    elif arr2[j] < arr3[k]:
+        j += 1
+    else:
+        k += 1
+
+print(result)
+
+14)
+
+
+mat = [[3,3,1,1],[2,2,1,2],[1,1,1,2]]
+
+m, n = len(mat), len(mat[0])
+diagonals = {}
+
+for i in range(m):
+    for j in range(n):
+        if i - j not in diagonals:
+            diagonals[i - j] = []
+        diagonals[i - j].append(mat[i][j])
+
+for key in diagonals:
+    diagonals[key].sort()
+
+for i in range(m):
+    for j in range(n):
+        mat[i][j] = diagonals[i - j].pop(0)
+
+print(mat)
+
+
+
+11/9/24
+
+1)
+
+def removeElement(nums, val):
+    k = 0  
+    for i in range(len(nums)):
+        if nums[i] != val:
+            nums[k] = nums[i]
+            k += 1
+    return k
+
+
+nums = [0, 1, 2, 2, 3, 0, 4, 2]
+val = 2
+k = removeElement(nums, val)
+
+print(f"Output: {k}, nums = {nums[:k]}")  
+
+2)
+
+def permuteUnique(nums):
+    def backtrack(path, used):
+        if len(path) == len(nums):
+            result.append(path[:])
+            return
+        
+        for i in range(len(nums)):
+            if used[i] or (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]):
+                continue
+            
+            used[i] = True
+            path.append(nums[i])
+            backtrack(path, used)
+            path.pop()
+            used[i] = False
+
+    nums.sort()
+    result = []
+    backtrack([], [False] * len(nums))
+    return result
+
+print(permuteUnique([1,1,2]))
+print(permuteUnique([1,2,3]))
+
+3)
+
+def getPermutation(n, k):
+    from math import factorial
+
+    numbers = list(range(1, n + 1))
+    k -= 1
+    result = []
+
+    for i in range(n):
+        fact = factorial(n - 1 - i)
+        index = k // fact
+        result.append(numbers.pop(index))
+        k %= fact
+
+    return ''.join(map(str, result))
+
+print(getPermutation(3, 3))
+print(getPermutation(4, 9))
+print(getPermutation(3, 1))
+4)
+
+def lengthOfLastWord(s):
+    s = s.strip()
+    if not s:
+        return 0
+    words = s.split()
+    return len(words[-1])
+
+print(lengthOfLastWord("Hello World"))
+print(lengthOfLastWord("   fly me   to   the moon  "))
+print(lengthOfLastWord("luffy is still joyboy"))
+
+5)
+
+def maxSubArray(nums):
+    max_sum = current_sum = nums[0]
+    
+    for num in nums[1:]:
+        current_sum = max(num, current_sum + num)
+        max_sum = max(max_sum, current_sum)
+    
+    return max_sum
+
+print(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))  
+print(maxSubArray([1]))                     
+print(maxSubArray([5,4,-1,7,8]))            
+
+6)
+
+def combinationSum2(candidates, target):
+    def backtrack(start, target, path):
+        if target == 0:
+            result.append(path)
+            return
+        if target < 0:
+            return
+        
+        for i in range(start, len(candidates)):
+            if i > start and candidates[i] == candidates[i - 1]:
+                continue
+            
+            backtrack(i + 1, target - candidates[i], path + [candidates[i]])
+    
+    candidates.sort()  
+    result = []
+    backtrack(0, target, [])
+    return result
+
+print(combinationSum2([10,1,2,7,6,1,5], 8))  
+print(combinationSum2([2,5,2,1,2], 5))     
+
+7)
+
+def combinationSum(candidates, target):
+    def backtrack(start, target, path):
+        if target == 0:
+            result.append(path)
+            return
+        if target < 0:
+            return
+        
+        for i in range(start, len(candidates)):
+            backtrack(i, target - candidates[i], path + [candidates[i]])
+    
+    result = []
+    backtrack(0, target, [])
+    return result
+
+print(combinationSum([2, 3, 6, 7], 7)) 
+print(combinationSum([2, 3, 5], 8))    
+print(combinationSum([2], 1))           
+
+8)
+
+def isValidSudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    
+    for r in range(9):
+        for c in range(9):
+            num = board[r][c]
+            if num == '.':
+                continue
+            
+            if num in rows[r]:
+                return False
+            rows[r].add(num)
+            
+            if num in cols[c]:
+                return False
+            cols[c].add(num)
+            
+            box_index = (r // 3) * 3 + (c // 3)
+            if num in boxes[box_index]:
+                return False
+            boxes[box_index].add(num)
+    
+    return True
+
+board1 = [
+    ["5","3",".",".","7",".",".",".","."],
+    ["6",".",".","1","9","5",".",".","."],
+    [".","9","8",".",".",".",".","6","."],
+    ["8",".",".",".","6",".",".",".","3"],
+    ["4",".",".","8",".","3",".",".","1"],
+    ["7",".",".",".","2",".",".",".","6"],
+    [".","6",".",".",".",".","2","8","."],
+    [".",".",".","4","1","9",".",".","5"],
+    [".",".",".",".","8",".",".","7","9"]
+]
+print(isValidSudoku(board1)) 
+board2 = [
+    ["8","3",".",".","7",".",".",".","."],
+    ["6",".",".","1","9","5",".",".","."],
+    [".","9","8",".",".",".",".","6","."],
+    ["8",".",".",".","6",".",".",".","3"],
+    ["4",".",".","8",".","3",".",".","1"],
+    ["7",".",".",".","2",".",".",".","6"],
+    [".","6",".",".",".",".","2","8","."],
+    [".",".",".","4","1","9",".",".","5"],
+    [".",".",".",".","8",".",".","7","9"]
+]
+print(isValidSudoku(board2))  
+
+9)
+
+def countAndSay(n):
+    if n == 1:
+        return "1"
+
+    prev_term = countAndSay(n - 1)
+    result = []
+    count = 1
+
+    for i in range(1, len(prev_term)):
+        if prev_term[i] == prev_term[i - 1]:
+            count += 1
+        else:
+            result.append(str(count) + prev_term[i - 1])
+            count = 1
+
+    result.append(str(count) + prev_term[-1])
+
+    return ''.join(result)
+
+print(countAndSay(1)) 
+print(countAndSay(4))  
+
+
+
+
+16/9/23
+
+
+1)
+
+def findKthPositive(arr, k):
+    missing_count = 0
+    current = 1
+    index = 0
+    
+    while missing_count < k:
+        if index < len(arr) and arr[index] == current:
+            index += 1
+        else:
+            missing_count += 1
+            if missing_count == k:
+                return current
+        current += 1
+
+# Example 1
+arr1 = [2, 3, 4, 7, 11]
+k1 = 5
+print(findKthPositive(arr1, k1))  # Output: 9
+
+2)
+
+# Peak Element Finder
+
+def find_peak(nums):
+    left, right = 0, len(nums) - 1
+    
+    while left < right:
+        mid = (left + right) // 2
+        if nums[mid] < nums[mid + 1]:
+            left = mid + 1
+        else:
+            right = mid
+            
+    return left
+
+# Example usage
+nums = [1, 2, 3, 1]
+print(find_peak(nums))  # Output: 2
+
+
+3)
+
+def strStr(haystack: str, needle: str) -> int:
+    if not needle:
+        return 0
+    haystack_len = len(haystack)
+    needle_len = len(needle)
+    
+    for i in range(haystack_len - needle_len + 1):
+        if haystack[i:i + needle_len] == needle:
+            return i
+    return -1
+
+# Example usage
+haystack = "sadbutsad"
+needle = "sad"
+output = strStr(haystack, needle)
+print(output)  # Output: 0
+
+
+4)
+
+def substring_words(words):
+    result = []
+    for i in range(len(words)):
+        for j in range(len(words)):
+            if i != j and words[i] in words[j]:
+                result.append(words[i])
+                break
+    return list(set(result))
+
+# Example usage
+words = ["mass", "as", "hero", "superhero"]
+output = substring_words(words)
+print(output)  # Output: ["as", "hero"]
+
+5)
+
+
+# Word Break Problem
+
+def wordBreak(s, wordDict):
+    word_set = set(wordDict)
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+
+    for i in range(1, len(s) + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+
+    return dp[len(s)]
+
+# Example usage
+s = "leetcode"
+wordDict = ["leet", "code"]
+output = wordBreak(s, wordDict)
+print(output)  # Output: true
+
+
+6)
+
+# Word Break Problem
+
+def wordBreak(s, wordDict):
+    word_set = set(wordDict)
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+
+    for i in range(1, len(s) + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+
+    return dp[len(s)]
+
+# Example usage
+s = "leetcode"
+wordDict = ["leet", "code"]
+output = wordBreak(s, wordDict)
+print(output)  # Output: true
+
+
+7)
+
+def fullJustify(words, maxWidth):
+    res, cur, num_of_letters = [], [], 0
+
+    for w in words:
+        if num_of_letters + len(w) + len(cur) > maxWidth:
+            for i in range(maxWidth - num_of_letters):
+                cur[i % (len(cur) - 1 or 1)] += ' '
+            res.append(''.join(cur))
+            cur, num_of_letters = [], 0
+        cur += [w]
+        num_of_letters += len(w)
+
+    return res + [' '.join(cur).ljust(maxWidth)]
+    
+# Example usage
+words = ["This", "is", "an", "example", "of", "text", "justification."]
+maxWidth = 16
+output = fullJustify(words, maxWidth)
+print(output)
+
+
+8)
+
+class WordFilter:
+
+    def init(self, words):
+        self.words = words
+        self.prefix_suffix_map = {}
+        for index, word in enumerate(words):
+            for i in range(len(word) + 1):
+                for j in range(len(word) + 1):
+                    prefix = word[:i]
+                    suffix = word[j:]
+                    self.prefix_suffix_map[(prefix, suffix)] = index
+
+    def f(self, pref, suff):
+        return self.prefix_suffix_map.get((pref, suff), -1)
+
+# Example usage
+wordFilter = WordFilter(["apple"])
+print(wordFilter.f("a", "e"))  # Output: 0
+
+
+9)
+
+def uniquePaths(m: int, n: int) -> int:
+    dp = [[1] * n for _ in range(m)]
+    
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    
+    return dp[m - 1][n - 1]
+
+# Example usage
+m = 3
+n = 7
+print(uniquePaths(m, n))  # Output: 28
+
+
+10)
+
+def numIdenticalPairs(nums):
+    count = 0
+    freq = {}
+    
+    for num in nums:
+        if num in freq:
+            count += freq[num]
+            freq[num] += 1
+        else:
+            freq[num] = 1
+            
+    return count
+
+# Example usage
+nums = [1, 2, 3, 1, 1, 3]
+output = numIdenticalPairs(nums)
+print(output)  # Output: 4
+
+11)
+
+# Warshall’s & Floyd’s Algorithm
+
+import heapq
+from collections import defaultdict
+
+def networkDelayTime(times, n, k):
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    
+    min_heap = [(0, k)]
+    time_to_receive = {i: float('inf') for i in range(1, n + 1)}
+    time_to_receive[k] = 0
+    
+    while min_heap:
+        curr_time, node = heapq.heappop(min_heap)
+        
+        if curr_time > time_to_receive[node]:
+            continue
+        
+        for neighbor, travel_time in graph[node]:
+            time = curr_time + travel_time
+            if time < time_to_receive[neighbor]:
+                time_to_receive[neighbor] = time
+                heapq.heappush(min_heap, (time, neighbor))
+    
+    max_time = max(time_to_receive.values())
+    return max_time if max_time < float('inf') else -1
+
+# Example usage
+times = [[2, 1, 1], [2, 3, 1], [3, 4, 1]]
+n = 4
+k = 2
+output = networkDelayTime(times, n, k)
+print(output)  # Output: 2
+
+
+12)
+
+# Warshall’s & Floyd’s Algorithm
+
+import heapq
+from collections import defaultdict
+
+def networkDelayTime(times, n, k):
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    
+    min_heap = [(0, k)]
+    time_to_receive = {i: float('inf') for i in range(1, n + 1)}
+    time_to_receive[k] = 0
+    
+    while min_heap:
+        curr_time, node = heapq.heappop(min_heap)
+        
+        if curr_time > time_to_receive[node]:
+            continue
+        
+        for neighbor, travel_time in graph[node]:
+            time = curr_time + travel_time
+            if time < time_to_receive[neighbor]:
+                time_to_receive[neighbor] = time
+                heapq.heappush(min_heap, (time, neighbor))
+    
+    max_time = max(time_to_receive.values())
+    return max_time if max_time < float('inf') else -1
+
+# Example usage
+times = [[2, 1, 1], [2, 3, 1], [3, 4, 1]]
+n = 4
+k = 2
+output = networkDelayTime(times, n, k)
+print(output)  # Output: 2
+
+13)
+
+from collections import deque, defaultdict
+
+def game_result(graph):
+    n = len(graph)
+    dp = [[0] * n for _ in range(n)]
+    queue = deque()
+    
+    # Initialize the terminal states
+    for mouse in range(n):
+        for cat in range(n):
+            if mouse == 0:
+                dp[mouse][cat] = 1
+                queue.append((mouse, cat, 1))  # Mouse wins
+            elif mouse == cat:
+                dp[mouse][cat] = 2
+                queue.append((mouse, cat, 2))  # Cat wins
+    
+    # BFS to propagate the results
+    while queue:
+        mouse_pos, cat_pos, result = queue.popleft()
+        if result == 1:  # If Mouse wins from this state, update all predecessors
+            for prev_mouse in graph[mouse_pos]:
+                if dp[prev_mouse][cat_pos] == 0:
+                    if all(dp[neigh][cat_pos] in [1, 0] for neigh in graph[prev_mouse]):
+                        dp[prev_mouse][cat_pos] = 1
+                        queue.append((prev_mouse, cat_pos, 1))
+        elif result == 2:  # If Cat wins from this state, update all predecessors
+            for prev_cat in graph[cat_pos]:
+                if prev_cat != 0:  # Cat cannot move to the hole
+                    if dp[mouse_pos][prev_cat] == 0:
+                        if all(dp[mouse_pos][neigh] in [2, 0] for neigh in graph[cat_pos] if neigh != prev_cat):
+                            dp[mouse_pos][prev_cat] = 2
+                            queue.append((mouse_pos, prev_cat, 2))
+    
+    # The result we are interested in
+    return dp[1][2]
+
+# Example usage
+graph = [[2, 5], [3], [0, 4, 5], [1, 4, 5], [2, 3], [0, 2, 3]]
+print(game_result(graph))  # Output: 0
+
+14)
+
+import heapq
+from collections import defaultdict
+
+def maxProbability(n, edges, succProb, start, end):
+    graph = defaultdict(list)
+    
+    for (a, b), prob in zip(edges, succProb):
+        graph[a].append((b, prob))
+        graph[b].append((a, prob))
+    
+    max_heap = [(-1.0, start)]
+    probabilities = {i: 0 for i in range(n)}
+    probabilities[start] = 1.0
+    
+    while max_heap:
+        prob, node = heapq.heappop(max_heap)
+        prob = -prob
+        
+        if node == end:
+            return prob
+        
+        for neighbor, edge_prob in graph[node]:
+            new_prob = prob * edge_prob
+            if new_prob > probabilities[neighbor]:
+                probabilities[neighbor] = new_prob
+                heapq.heappush(max_heap, (-new_prob, neighbor))
+    
+    return 0.0
+
+# Example usage
+n = 3
+edges = [[0, 1], [1, 2], [0, 2]]
+succProb = [0.5, 0.5, 0.2]
+start = 0
+end = 2
+output = maxProbability(n, edges, succProb, start, end)
+print(f"{output:.5f}")
+
+15)
+
+def find_min_max(arr):
+    min_val = min(arr)
+    max_val = max(arr)
+    return min_val, max_val
+
+# Test Case 1
+N1 = 8
+a1 = [5, 7, 3, 4, 9, 12, 6, 2]
+min1, max1 = find_min_max(a1)
+print(f"Input: N={N1}, a[] = {a1}")
+print(f"Output: Min = {min1}, Max = {max1}")
+
+# Test Case 2
+N2 = 9
+a2 = [1, 3, 5, 7, 9, 11, 13, 15, 17]
+min2, max2 = find_min_max(a2)
+print(f"Input: N={N2}, a[] = {a2}")
+print(f"Output: Min = {min2}, Max = {max2}")
+
+# Test Case 3
+N3 = 10
+a3 = [22, 34, 35, 36, 43, 67, 12, 13, 15, 17]
+min3, max3 = find_min_max(a3)
+print(f"Input: N={N3}, a[] = {a3}")
+print(f"Output: Min = {min3}, Max = {max3}")
+
+
+16)
+
+# Define the array
+array = [2, 4, 6, 8, 10, 12, 14, 18]
+
+# Find minimum and maximum values
+minimum_value = min(array)
+maximum_value = max(array)
+
+# Output the results
+print(f"Min = {minimum_value}, Max = {maximum_value}")
+
+
+17)
+
+# Unsorted array
+a = [31, 23, 35, 27, 11, 21, 15, 28]
+N = len(a)
+
+# Merge Sort Algorithm
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L)
+        merge_sort(R)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+# Call merge_sort on the array
+merge_sort(a)
+
+# Print sorted array
+print(','.join(map(str, a)))
+ 
+18)
+
+def merge_sort(arr, count):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L, count)
+        merge_sort(R, count)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            count[0] += 1
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+arr = [12, 4, 78, 23, 45, 67, 89, 1]
+comparison_count = [0]
+merge_sort(arr, comparison_count)
+print(f"Sorted array: {arr}")
+print(f"Number of comparisons: {comparison_count[0]}")
+
+19)
+
+# Floyd's Algorithm Implementation
+
+def floyd_warshall(n, edges):
+    # Initialize distance matrix
+    distance = [[float('inf')] * n for _ in range(n)]
+    
+    for i in range(n):
+        distance[i][i] = 0
+        
+    for u, v, w in edges:
+        distance[u][v] = w
+        distance[v][u] = w  # Assuming undirected graph
+
+    print("Distance matrix before applying Floyd's Algorithm:")
+    for row in distance:
+        print(row)
+
+    # Floyd's Algorithm
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if distance[i][j] > distance[i][k] + distance[k][j]:
+                    distance[i][j] = distance[i][k] + distance[k][j]
+
+    print("\nDistance matrix after applying Floyd's Algorithm:")
+    for row in distance:
+        print(row)
+
+    return distance
+
+# Input
+n = 4
+edges = [[0, 1, 3], [1, 2, 1], [1, 3, 4], [2, 3, 1]]
+distance_matrix = floyd_warshall(n, edges)
+
+# Identify and print the shortest path
+shortest_path = min(distance_matrix[0][1:])  # Shortest path from city 0 to any other city
+print("\nShortest path:", shortest_path)
+
+
+20)
+
+# Floyd's Algorithm Implementation
+
+import numpy as np
+
+def floyd_warshall(n, edges):
+    # Initialize distance matrix
+    dist = np.full((n, n), float('inf'))
+    for i in range(n):
+        dist[i][i] = 0
+    for u, v, w in edges:
+        dist[u][v] = w
+        dist[v][u] = w  # Assuming undirected graph
+
+    print("Distance matrix before applying Floyd's Algorithm:")
+    print(dist)
+
+    # Floyd's Algorithm
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][j] > dist[i][k] + dist[k][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+
+    print("Distance matrix after applying Floyd's Algorithm:")
+    print(dist)
+
+    return dist
+
+# Input
+n = 5
+edges = [[0, 1, 2], [0, 4, 8], [1, 2, 3], [1, 4, 2], [2, 3, 1], [3, 4, 1]]
+distance_matrix = floyd_warshall(n, edges)
+
+# Identify and print the shortest path
+shortest_path = np.min(distance_matrix)
+print("Shortest path:", shortest_path
