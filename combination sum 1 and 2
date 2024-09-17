@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void printCombination(int arr[], int data[], int start, int end, int index, int r, int target) {
+    if (index == r) {
+        int sum = 0;
+        for (int i = 0; i < r; i++) {
+            sum += data[i];
+        }
+        if (sum == target) {
+            for (int i = 0; i < r; i++) printf("%d ", data[i]);
+            printf("\n");
+        }
+        return;
+    }
+
+    for (int i = start; i <= end && end - i + 1 >= r - index; i++) {
+        data[index] = arr[i];
+        printCombination(arr, data, i, end, index + 1, r, target);
+    }
+}
+
+void combinationSum(int arr[], int n, int target) {
+    int data[n];
+    for (int i = 1; i <= n; i++) {
+        printCombination(arr, data, 0, n - 1, 0, i, target);
+    }
+}
+
+int main() {
+    int candidates[] = {2, 3, 6, 7};
+    int target = 7;
+    int n = sizeof(candidates) / sizeof(candidates[0]);
+
+    printf("Combinations that sum to %d:\n", target);
+    combinationSum(candidates, n, target);
+
+    return 0;
+}
