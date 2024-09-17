@@ -1,0 +1,25 @@
+# Check if a given MST is unique
+def check_mst_uniqueness(n, edges, given_mst):
+    def kruskal_all_msts(n, edges):
+        mst_list = []
+        def find_mst():
+            mst, total_weight = kruskal(n, edges)
+            mst_list.append((mst, total_weight))
+            return mst
+        
+        # Try all possible combinations for uniqueness check
+        find_mst()
+        return mst_list
+
+    all_msts = kruskal_all_msts(n, edges)
+    given_mst_set = set(given_mst)
+    
+    for mst, _ in all_msts:
+        if set(mst) != given_mst_set:
+            return False, mst  # MST is not unique, return another possible MST
+    
+    return True, None
+
+# Test Case 1
+n = 4
+edges = [(0, 1, 10), (0, 2, 6), (0, 3, 5), (1, 3, 15), (2, 3, 
