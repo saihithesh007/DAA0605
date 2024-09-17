@@ -1,0 +1,45 @@
+def merge_sort_count(arr):
+    def merge_and_count(arr, left, mid, right):
+        i = j = k = 0
+        left_arr = arr[left:mid + 1]
+        right_arr = arr[mid + 1:right + 1]
+        local_count = 0
+
+        while i < len(left_arr) and j < len(right_arr):
+            if left_arr[i] <= right_arr[j]:
+                arr[k] = left_arr[i]
+                i += 1
+            else:
+                arr[k] = right_arr[j]
+                j += 1
+            k += 1
+            local_count += 1
+
+        while i < len(left_arr):
+            arr[k] = left_arr[i]
+            i += 1
+            k += 1
+
+        while j < len(right_arr):
+            arr[k] = right_arr[j]
+            j += 1
+            k += 1
+
+        return local_count
+
+    def merge_sort_and_count(arr, left, right):
+        if left < right:
+            mid = (left + right) // 2
+            left_count = merge_sort_and_count(arr, left, mid)
+            right_count = merge_sort_and_count(arr, mid + 1, right)
+            merge_count = merge_and_count(arr, left, mid, right)
+            return left_count + right_count + merge_count
+        return 0
+
+    n = len(arr)
+    count = merge_sort_and_count(arr, 0, n - 1)
+    return arr, count
+
+# Test Cases
+print(merge_sort_count([12, 4, 78, 23, 45, 67, 89, 1]))  # Output: ([1, 4, 12, 23, 45, 67, 78, 89], count)
+print(merge_sort_count([38, 27, 43, 3, 9, 82, 10]))  # Output: ([3, 9, 10, 27, 38, 43, 82], count)
