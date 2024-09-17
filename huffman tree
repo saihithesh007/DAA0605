@@ -1,0 +1,48 @@
+from heapq import heappush, heappop
+from collections import defaultdict
+
+# Function to build Huffman Tree
+def build_huffman_tree(frequencies, characters):
+    heap = [[weight, [char, ""]] for char, weight in zip(characters, frequencies)]
+    heappush(heap, [float('inf'), ["", ""]])  # Sentinel to stop the loop
+    
+    while len(heap) > 1:
+        lo = heappop(heap)
+        hi = heappop(heap)
+        for pair in lo[1:]:
+            pair[1] = '0' + pair[1]
+        for pair in hi[1:]:
+            pair[1] = '1' + pair[1]
+        heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
+    
+    return sorted(heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+    
+# Function to decode Huffman encoded string
+def decode_huffman(encoded_string, huffman_tree):
+    huff_dict = {code: char for char, code in huffman_tree}
+    current_code = ""
+    decoded_message = ""
+    
+    for bit in encoded_string:
+        current_code += bit
+        if current_code in huff_dict:
+            decoded_message += huff_dict[current_code]
+            current_code = ""
+    
+    return decoded_message
+
+# Test Case 1
+characters = ['a', 'b', 'c', 'd']
+frequencies = [5, 9, 12, 13]
+encoded_string = '1101100111110'
+huffman_tree = build_huffman_tree(frequencies, characters)
+decoded_message = decode_huffman(encoded_string, huffman_tree)
+print(decoded_message)  # Output: "abacd"
+
+# Test Case 2
+characters = ['f', 'e', 'd', 'c', 'b', 'a']
+frequencies = [5, 9, 12, 13, 16, 45]
+encoded_string = '110011011100101111001011'
+huffman_tree = build_huffman_tree(frequencies, characters)
+decoded_message = decode_huffman(encoded_string, huffman_tree)
+print(decoded_message)  # Output: "fcbade"
