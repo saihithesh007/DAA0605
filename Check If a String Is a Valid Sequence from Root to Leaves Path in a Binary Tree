@@ -1,0 +1,38 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNode;
+
+bool isValidSequence(TreeNode* root, int* arr, int arrSize, int index) {
+    if (!root) {
+        return index == arrSize;
+    }
+    if (index >= arrSize || root->val != arr[index]) {
+        return false;
+    }
+    if (!root->left && !root->right) {
+        return index == arrSize - 1;
+    }
+    return isValidSequence(root->left, arr, arrSize, index + 1) ||
+           isValidSequence(root->right, arr, arrSize, index + 1);
+}
+
+int main() {
+    TreeNode n0 = {0, NULL, NULL};
+    TreeNode n1 = {1, NULL, NULL};
+    TreeNode n2 = {0, &n0, &n1};
+    TreeNode n3 = {0, NULL, NULL};
+    TreeNode n4 = {1, NULL, NULL};
+    TreeNode root = {0, &n2, &n3};
+    
+    int arr[] = {0, 1, 0, 1};
+    int arrSize = sizeof(arr) / sizeof(arr[0]);
+    printf("Is valid sequence: %d\n", isValidSequence(&root, arr, arrSize, 0));
+    
+    return 0;
+}
