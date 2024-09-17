@@ -1,0 +1,13 @@
+import heapq
+
+def dijkstra(n, graph, source):
+    dist = [float('inf')] * n
+    dist[source] = 0
+    min_heap = [(0, source)]
+    
+    while min_heap:
+        curr_dist, u = heapq.heappop(min_heap)
+        if curr_dist > dist[u]:
+            continue
+        for v, weight in graph[u]:
+            if curr_dist
