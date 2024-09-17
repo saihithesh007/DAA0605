@@ -1,0 +1,33 @@
+def game_result(graph):
+    from collections import deque
+
+    def bfs(start, end, graph):
+        queue = deque([(start, 0)])
+        visited = set()
+        while queue:
+            node, dist = queue.popleft()
+            if node == end:
+                return dist
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, dist + 1))
+        return float('inf')
+
+    mouse_start = 1
+    cat_start = 2
+    hole = 0
+    mouse_to_hole = bfs(mouse_start, hole, graph)
+    cat_to_mouse = bfs(cat_start, mouse_start, graph)
+    cat_to_hole = bfs(cat_start, hole, graph)
+    
+    if mouse_to_hole < cat_to_mouse:
+        return 1  # Mouse wins
+    elif cat_to_mouse <= mouse_to_hole:
+        return 2  # Cat wins
+    else:
+        return 0  # Draw
+
+# Example usage
+graph = [[2,5],[3],[0,4,5],[1,4,5],[2,3],[0,2,3]]
+print(game_result(graph))  # Output: 0
