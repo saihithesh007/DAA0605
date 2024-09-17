@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 100
+
+typedef struct {
+    int u, v, weight;
+} Edge;
+
+typedef struct {
+    int parent[MAX];
+    int rank[MAX];
+} DisjointSet;
+
+int find(DisjointSet *ds, int i) {
+    if (ds->parent[i] != i)
+        ds->parent[i] = find(ds, ds->parent[i]);
+    return ds->parent[i];
+}
+
+void unionSets(DisjointSet *ds, int x, int y) {
+    int xroot = find(ds, x);
+    int yroot = find(ds, y);
+    
+    if (ds->rank[xroot] < ds->rank[yroot])
+        ds->parent[xroot] = yroot;
+    else if (ds->rank[xroot] > ds->rank[yroot])
+        ds->parent[yroot] = xroot;
+    else {
+        ds->parent[yroot] = xroot;
+        ds->rank[xroot]++;
+    }
+}
+
+void boruvka(int graph[MAX][MAX], int V) {
+    DisjointSet ds;
+    for (int i = 0; i < V; i++) {
+        ds.parent[i] = i;
+        ds.rank[i] = 0;
+    }
+
+    Edge cheapest[MAX];
+    int numTrees = V, MSTweight = 0;
+
+    while (numTrees > 1) {
+        for (int i = 0; i < V; i++) {
+            cheapest[i].weight = INT_MAX;
+        }
+
+        for (int u = 0; u < V; u++) {
+            for (int v = 0; v < V; v++) {
+                if (graph[u][v] && find(&ds, u) != find(&ds, v) && graph[u][v] < cheapest[u].weight) {
+                    cheapest[u].weight = graph[u][v];
+                    cheapest[u].u = u;
+                    cheapest[u].v = v;
+                }
+            }
+        }
+
+        for (int i = 0; i < V; i++) {
+            if (cheapest[i].weight != INT_MAX) {
+                int set1 = find(&ds, cheapest[i].u);
+                int set2 = find(&ds, cheapest[i].v);
+
+                if (set1 != set2) {
+                    MSTweight += cheapest[i].weight;
+                    unionSets(&ds, set1, set2);
+                    printf("Edge %d-%d with weight %d included in MST\n", cheapest[i].u, cheapest[i].v, cheapest[i].weight);
+                }
+            }
+        }
+    }
+    printf("Weight of MST is %d\n", MSTweight);
+}
+
+int main() {
+    int V = 4;
+    int graph[MAX][MAX] = {
+        {0, 10, 6, 5},
+        {10, 0, 0, 15},
+        {6, 0, 0, 4},
+        {5, 15, 4, 0}
+    };
+
+    boruvka(graph, V);
+    return 0;
+}
