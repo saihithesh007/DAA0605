@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+#define MAX_ROWS 100
+#define MAX_COLS 100
+
+// Assuming BinaryMatrix interface is provided as below:
+typedef struct {
+    int rows;
+    int cols;
+    int matrix[MAX_ROWS][MAX_COLS];
+} BinaryMatrix;
+
+int get(BinaryMatrix *bm, int row, int col) {
+    return bm->matrix[row][col];
+}
+
+int leftMostColumnWithOne(BinaryMatrix *bm) {
+    int rows = bm->rows;
+    int cols = bm->cols;
+    int min_col = cols;
+    int row = 0;
+    int col = cols - 1;
+
+    while (row < rows && col >= 0) {
+        if (get(bm, row, col) == 1) {
+            min_col = col;
+            col--;
+        } else {
+            row++;
+        }
+    }
+
+    return min_col < cols ? min_col : -1;
+}
+
+int main() {
+    BinaryMatrix bm = {2, 2, {{0, 0}, {1, 1}}};
+    printf("Leftmost column with 1: %d\n", leftMostColumnWithOne(&bm));
+    return 0;
+}
